@@ -109,7 +109,8 @@ function sumArray(array) {
 // 4. code:
 function reverseString(str, new_str = "") {
   // base case:
-  if (str.length === new_str.length) { // 3 === 3 => true
+  if (str.length === new_str.length) {
+    // 3 === 3 => true
     return new_str; //'cba'
   } else {
     new_str = str[new_str.length] + new_str; // 'ba' = str[2] + 'ba'  = 'cba'
@@ -122,9 +123,6 @@ function reverseString(str, new_str = "") {
 // 			time: .length lookup linear; adding to str linear; str.length function calls -> O(n) time complexity
 // 			space: new_str occupies n space -> total of 2n space -> O(n) space complexity
 // 				could reduce by mutating str but would increase time complexity (unshifting is n time)
-
-
-
 
 // ---------------------------------------------------------------------------------------
 // Write a function, pow(base, exponent), that takes in two numbers.
@@ -143,8 +141,36 @@ function reverseString(str, new_str = "") {
 // pow(2, 5)    // => 32
 // pow(3, 4)    // => 81
 // pow(2, -5)   // => 0.03125
-function pow(base, exponent) {}
 
+// 1. clarify/test I/O/edge:
+// 		edge: decimal powers?
+// 2. formulate approach:
+// 			solve recursively
+// 			check if exponent is negative -> return 1 / pow(base, exponent * -1)
+// 			base case: check if exponent is 0 -> return 1
+// 			otherwise: return base * pow(base, exponent - 1)
+// 3. pseudocode:
+// 		if(exponent < 0) return 1/pow(base, exponent * -1)
+// 		if(exponent === 0) return 1
+// 		else return base * pow(base, exponent - 1)
+// 4. code:
+function pow(base, exponent) {
+  if (exponent < 0) {
+    return 1 / pow(base, exponent * -1);
+  }
+  if (exponent === 0) {
+    return 1;
+  } else {
+    return base * pow(base, exponent - 1);
+  }
+}
+// 5. example input:
+// 6. time and space complexity:
+//		time: num recursive calls is equal to exponent -> O(n) time complexity
+// 		space: no additional space used in each function call -> O(1) space complexity
+
+
+// ---------------------------------------------------------------------------------------
 // A 1-dimensional array is also known as a flattened array.
 // Write a method, flatten(data), that accepts a single argument. The
 // method should take in an array of any dimension and return the flattened
