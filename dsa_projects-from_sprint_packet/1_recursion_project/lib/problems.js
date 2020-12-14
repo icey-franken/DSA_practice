@@ -276,11 +276,53 @@ function flatten(data) {
 //         }
 //     }
 // };
-//
+
 // fileFinder(desktop, 'app_academy_logo.svg');     // => true
 // fileFinder(desktop, 'everlong.flac');            // => true
 // fileFinder(desktop, 'sequoia.jpeg');             // => false
-function fileFinder(directories, targetFile) {}
+
+// 1. clarify/test I/O/edge:
+// 		assume we solve recursive; assume valid inputs
+// 2. formulate approach:
+// 		depth or breadth first - let's do depth and solve recursively
+// 		iterate through top level objects
+// 		if first character is '/' -> recursive call on that directory slice
+// 		otherise check if it matches targetFile - if so return true, else continue
+// 3. pseudocode:
+// 		found = false
+// 		for each key in top level:
+// 			if key[0] === '/' {
+// 				if(fileFinder(value, targetFile)){
+// 					found = true
+// 					break
+// 				}
+// 				if(found){return true}
+// 			}
+// 			else if key === targetFile {found = true}
+// 		return found
+// 4. code:
+function fileFinder(directories, targetFile) {
+	let found = false;
+	for(let key in directories){
+		if(key[0] === '/') {
+			if(fileFinder(directories[key], targetFile)){
+				found = true;
+				break
+			};
+		} else if (key === targetFile){
+			found = true;
+			break
+		}
+	}
+	return found;
+}
+// 5. example input:
+// 6. time and space complexity:
+// 		time: for loop with recursive call - at worst it is O(n*m) ~polynomial time
+// 			n recursive calls based on depth;
+// 			m for loops based on length
+// 		space: only additional space used is for found variable - O(1) constant space
+
 
 // ---------------------------------------------------------------------------------------
 // Write another function, pathFinder(directories, targetFile), that returns the path that contains the targetFile.
