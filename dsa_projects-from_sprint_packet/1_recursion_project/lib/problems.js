@@ -42,20 +42,6 @@ function lucasNumber(n, memo={0: 2, 1: 1}) {
 // 		space: memo object occupies n spaces in memory => O(n) space complexity
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ---------------------------------------------------------------------------------------
 // Write a function, sumArray(array), that takes in an array of numbers.
 // The function should return the total sum of the elements.
@@ -68,11 +54,37 @@ function lucasNumber(n, memo={0: 2, 1: 1}) {
 // sumArray([5])            // => 5
 // sumArray([5, 2])         // => 7
 // sumArray([4, 10, -1, 2]) // => 15
-function sumArray(array) {
 
+// 1. clarify/test I/O/edge cases:
+// 		clarify: can we mutate array? Assume yes
+// 		test I/O above
+// 		edge cases: empty array => 0, non-array -> N/A
+// 2. formulate approach:
+// 		solving RECURSIVELY - base case is empty array. Pop value and add to return of function call on mutated array.
+// 3. pseudocode:
+// 		check base case: if array.length = 0 return 0
+// 		sum: val = array.pop()
+// 		return val + sumArray(array)
+// 4. code:
+
+function sumArray(array) {
+	if(array.length===0){
+		return 0;
+	}
+	const val = array.pop();
+	return val + sumArray(array)
 }
 
+// 5. example input:
+// 6. time and space complexity:
+// 		time: one recurvise call for each element
+// 			array.length is constant time
+// 			array.pop is constant time (NOTE that array.shift is O(n) time bc each element must be 'moved'!!!)
+// 			-> O(n) time complexity.
+// 		space: array occupies n space; val is overwritten each call -> O(1) time complexity
 
+
+// ---------------------------------------------------------------------------------------
 // Write a function, reverseString(str), that takes in a string.
 // The function should return the string with it's characters in reverse order.
 //
