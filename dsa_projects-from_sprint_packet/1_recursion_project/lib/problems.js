@@ -169,7 +169,6 @@ function pow(base, exponent) {
 //		time: num recursive calls is equal to exponent -> O(n) time complexity
 // 		space: no additional space used in each function call -> O(1) space complexity
 
-
 // ---------------------------------------------------------------------------------------
 // A 1-dimensional array is also known as a flattened array.
 // Write a method, flatten(data), that accepts a single argument. The
@@ -199,8 +198,49 @@ function pow(base, exponent) {
 //     1-dimensional array: ['some data']
 //     2-dimensional array: [['some data']]
 //     3-dimensional array: [[['some data']]]
-function flatten(data) {}
 
+// 1. clarify/test I/O/edge:
+// 		clarify: can we mutate? Assume yes
+// 		edge: non-array -> we consider it a 0-dim array and return an array with a single entry - the arg
+// 2. formulate approach:
+// 		two base cases:
+// 			arg is not an array -> we return that element
+// 			arg is an array and we are at the end of the array -> return our flattened array
+// 		step through array one element at a time -> heading towards our base case of reaching the end of the array
+// 		if that element is itself an array then we need to flatten it -> recursive call
+// 		else if that element is anything other than an array, we step
+//
+// 3. pseudocode:
+// 		default arg of flattened = []
+// 		check if array: if data is not array: flattened.push(data)
+// 		else if data is array:
+// 				for each el in data:
+// 						flattened.push(...flatten(el))
+// 		return flattened
+// 4. code:
+function flatten(data) {
+  let flattened = [];
+  if (!Array.isArray(data)) {
+    flattened.push(data);
+  } else {
+    for (let i = 0; i < data.length; i++) {
+      flattened.push(...flatten(data[i]));
+    }
+  }
+  return flattened;
+}
+// 5. example input:
+// 6. time and space complexity:
+// 		time complexity:
+// 			Array.isArray is constant time
+// 			.push is constant time
+// 			n recursive calls, where n is the length of the flattened array
+// 			at worst it is a * b time complexity (~polynomial, O(n^2)?)
+// 				a is the maximum array dimension (degree of nesting) - from recursive call
+// 				b is the maximum length of any nested array - from for loop
+// 		space complexity: O(n) space complexity, where n is the length of the flattened array
+
+// ---------------------------------------------------------------------------------------
 // Write a function, fileFinder(directories, targetFile), that accepts an object representing directories and a string respresenting a filename.
 // The function should return true, if the file is contained anywhere in the given directories.
 // Note that directory names will begin with '/', but file names will not.
@@ -242,6 +282,7 @@ function flatten(data) {}
 // fileFinder(desktop, 'sequoia.jpeg');             // => false
 function fileFinder(directories, targetFile) {}
 
+// ---------------------------------------------------------------------------------------
 // Write another function, pathFinder(directories, targetFile), that returns the path that contains the targetFile.
 // If the targetFile is not found in the directories, then return null.
 // You can assume the files are unique.
