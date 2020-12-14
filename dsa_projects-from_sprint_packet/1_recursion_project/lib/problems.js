@@ -29,18 +29,17 @@
 // 		return memo[n]
 // 4. code:
 
-function lucasNumber(n, memo={0: 2, 1: 1}) {
-	if(!memo[n]){
-		memo[n] = lucasNumber(n-1) + lucasNumber(n-2)
-	}
-	return memo[n]
+function lucasNumber(n, memo = { 0: 2, 1: 1 }) {
+  if (!memo[n]) {
+    memo[n] = lucasNumber(n - 1) + lucasNumber(n - 2);
+  }
+  return memo[n];
 }
 
 // 5. example input:
 // 6 time and space complexity:
 // 		time: recursive function that makes 2n calls => O(n) time complexity
 // 		space: memo object occupies n spaces in memory => O(n) space complexity
-
 
 // ---------------------------------------------------------------------------------------
 // Write a function, sumArray(array), that takes in an array of numbers.
@@ -68,11 +67,11 @@ function lucasNumber(n, memo={0: 2, 1: 1}) {
 // 4. code:
 
 function sumArray(array) {
-	if(array.length===0){
-		return 0;
-	}
-	const val = array.pop();
-	return val + sumArray(array)
+  if (array.length === 0) {
+    return 0;
+  }
+  const val = array.pop();
+  return val + sumArray(array);
 }
 
 // 5. example input:
@@ -82,7 +81,6 @@ function sumArray(array) {
 // 			array.pop is constant time (NOTE that array.shift is O(n) time bc each element must be 'moved'!!!)
 // 			-> O(n) time complexity.
 // 		space: array occupies n space; val is overwritten each call -> O(1) time complexity
-
 
 // ---------------------------------------------------------------------------------------
 // Write a function, reverseString(str), that takes in a string.
@@ -96,11 +94,39 @@ function sumArray(array) {
 // reverseString("c")           // => "c"
 // reverseString("internet")    // => "tenretni"
 // reverseString("friends")     // => "sdneirf"
-function reverseString(str) {
 
+// 1. clarify/test I/O/edge cases:
+// 		assume string
+// 		mutate? Assume no
+// 2. formulate approach:
+// 		pass an index - base case is index = str.length
+// 		return the character at that index plus function called with incremented index
+// 3. pseudocode:
+// 			default arg of idx = 0
+// 			default arg of new_str = ''
+// 			check base case: if idx = str.length then return new_str
+// 			otherwise new_str = new_str + str[idx]
+// 4. code:
+function reverseString(str, new_str = "") {
+  // base case:
+  if (str.length === new_str.length) { // 3 === 3 => true
+    return new_str; //'cba'
+  } else {
+    new_str = str[new_str.length] + new_str; // 'ba' = str[2] + 'ba'  = 'cba'
+    return reverseString(str, new_str); //reverseString('abc', 'cba')
+  }
 }
+// 5. example input:
+// reverseString('abc')
+// 6. time and space complexity:
+// 			time: .length lookup linear; adding to str linear; str.length function calls -> O(n) time complexity
+// 			space: new_str occupies n space -> total of 2n space -> O(n) space complexity
+// 				could reduce by mutating str but would increase time complexity (unshifting is n time)
 
 
+
+
+// ---------------------------------------------------------------------------------------
 // Write a function, pow(base, exponent), that takes in two numbers.
 // The function should calculate the base raised to the exponent power.
 //
@@ -117,10 +143,7 @@ function reverseString(str) {
 // pow(2, 5)    // => 32
 // pow(3, 4)    // => 81
 // pow(2, -5)   // => 0.03125
-function pow(base, exponent) {
-
-}
-
+function pow(base, exponent) {}
 
 // A 1-dimensional array is also known as a flattened array.
 // Write a method, flatten(data), that accepts a single argument. The
@@ -150,9 +173,7 @@ function pow(base, exponent) {
 //     1-dimensional array: ['some data']
 //     2-dimensional array: [['some data']]
 //     3-dimensional array: [[['some data']]]
-function flatten(data) {
-
-}
+function flatten(data) {}
 
 // Write a function, fileFinder(directories, targetFile), that accepts an object representing directories and a string respresenting a filename.
 // The function should return true, if the file is contained anywhere in the given directories.
@@ -193,10 +214,7 @@ function flatten(data) {
 // fileFinder(desktop, 'app_academy_logo.svg');     // => true
 // fileFinder(desktop, 'everlong.flac');            // => true
 // fileFinder(desktop, 'sequoia.jpeg');             // => false
-function fileFinder(directories, targetFile) {
-
-}
-
+function fileFinder(directories, targetFile) {}
 
 // Write another function, pathFinder(directories, targetFile), that returns the path that contains the targetFile.
 // If the targetFile is not found in the directories, then return null.
@@ -207,17 +225,14 @@ function fileFinder(directories, targetFile) {
 // pathFinder(desktop, 'trixie_lou.jpeg'));     // => '/images/pets/trixie_lou.jpeg'
 // pathFinder(desktop, 'everlong.flac'));       // => '/music/genres/rock/everlong.flac'
 // pathFinder(desktop, 'honeybadger.png'));     // => null
-function pathFinder(directories, targetFile) {
-
-}
-
+function pathFinder(directories, targetFile) {}
 
 module.exports = {
-    lucasNumber,
-    sumArray,
-    reverseString,
-    pow,
-    flatten,
-    fileFinder,
-    pathFinder
+  lucasNumber,
+  sumArray,
+  reverseString,
+  pow,
+  flatten,
+  fileFinder,
+  pathFinder,
 };
