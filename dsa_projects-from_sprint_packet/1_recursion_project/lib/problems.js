@@ -302,19 +302,19 @@ function flatten(data) {
 // 		return found
 // 4. code:
 function fileFinder(directories, targetFile) {
-	let found = false;
-	for(let key in directories){
-		if(key[0] === '/') {
-			if(fileFinder(directories[key], targetFile)){
-				found = true;
-				break
-			};
-		} else if (key === targetFile){
-			found = true;
-			break
-		}
-	}
-	return found;
+  let found = false;
+  for (let key in directories) {
+    if (key[0] === "/") {
+      if (fileFinder(directories[key], targetFile)) {
+        found = true;
+        break;
+      }
+    } else if (key === targetFile) {
+      found = true;
+      break;
+    }
+  }
+  return found;
 }
 // 5. example input:
 // 6. time and space complexity:
@@ -322,7 +322,6 @@ function fileFinder(directories, targetFile) {
 // 			n recursive calls based on depth;
 // 			m for loops based on length
 // 		space: only additional space used is for found variable - O(1) constant space
-
 
 // ---------------------------------------------------------------------------------------
 // Write another function, pathFinder(directories, targetFile), that returns the path that contains the targetFile.
@@ -334,7 +333,51 @@ function fileFinder(directories, targetFile) {
 // pathFinder(desktop, 'trixie_lou.jpeg'));     // => '/images/pets/trixie_lou.jpeg'
 // pathFinder(desktop, 'everlong.flac'));       // => '/music/genres/rock/everlong.flac'
 // pathFinder(desktop, 'honeybadger.png'));     // => null
-function pathFinder(directories, targetFile) {}
+
+// 1. clarify/test I/O/edge cases:
+// 		assume targetFile is string; assume directories is valid object
+// 2. formulate approach:
+// 		same idea as before, except now if key === targetFile we need to return the key string
+// 		this key string bubbles up - if fileFinder(args) !== null then we return key += file finder return value
+// 		final return will be string, which is initialized to null - if file not found then string will remain as null
+// 3. pseudocode:
+// 		file_path = null; //initialize answer
+// 		for key in directories: //iterate through top level:
+// 			if key starts with '/':
+// 					val = pathFinder(directories[key], targetFile)
+// 					if val is not null:
+// 							file_path = key + val;
+// 							break
+// 			else if key === targetFile:
+// 					file_path = '/' + key;
+// 					break
+// 		return file_path
+// 4. code:
+function pathFinder(directories, targetFile) {
+  let file_path = null;
+  for (let key in directories) {
+    if (key[0] === "/") {
+      const val = pathFinder(directories[key], targetFile);
+      if (val !== null) {
+        file_path = key + val;
+        break;
+      }
+    } else {
+      if (key === targetFile) {
+        file_path = "/" + key;
+        break;
+      }
+    }
+  }
+  return file_path;
+}
+// 5. example input:
+// 6. time and space complexity:
+// 		time: main contributors are for loop and recursive calls
+// 			number of recursive calls based on file tree depth
+// 			loop length based on tree length
+// 			overall time complexity at worst is polynomial O(n^2)
+// 		space: additional use of space from file_path and val variables -> O(n) constant space
 
 module.exports = {
   lucasNumber,
