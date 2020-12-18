@@ -164,7 +164,7 @@ function minChange(coins, amount) {
     old_sum_list = Object.keys(memo);
     for (let i = 0; i <= max_num_coin; i++) {
       for (let j = 0; j < old_sum_list.length; j++) {
-        old_sum = parseInt(old_sum_list[j],10);
+        old_sum = parseInt(old_sum_list[j], 10);
         new_sum = old_sum + i * coin;
         new_count = memo[old_sum] + i; // we access memo[old_sum] in case the count value changes during this loop - this way we always have the newest value
         if (memo[new_sum] === undefined || memo[new_sum] > new_count) {
@@ -172,8 +172,8 @@ function minChange(coins, amount) {
         }
       }
     }
-	}
-	// console.log(memo)
+  }
+  // console.log(memo)
   return memo[amount];
 }
 
@@ -184,6 +184,9 @@ function minChange(coins, amount) {
 // console.log(minChange([1, 5, 10, 25], 15)); // => 2, because 10 + 5 = 15
 // console.log(minChange([1, 5, 10, 25], 100)); // => 4, because 25 + 25 + 25 + 25 = 100
 // console.log(minChange([83, 186, 408, 419], 6249)); //20
+console.log(minChange([27, 352, 421, 198, 317, 110, 461, 31, 264], 5303));
+console.log(minChange([125, 146, 125, 252, 226, 25, 24, 308, 50], 8402));
+console.log(minChange([388, 232, 419, 338, 49, 434, 4, 143], 4993));
 module.exports = {
   lucasNumberMemo,
   minChange,
