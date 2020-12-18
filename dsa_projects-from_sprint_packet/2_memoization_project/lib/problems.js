@@ -100,7 +100,8 @@ function lucasNumberMemo(n, memo = { 0: 2, 1: 1 }) {
 // 			if min_num_coins === infinity: return 'impossible'
 // 			else: return min_num_coins
 
-function minChange1(coins, amount, memo = {}) {
+// greedy algo - won't work for last example
+function minChangeOld(coins, amount, memo = {}) {
   let min_num_coins = Infinity;
   let current_coins = [...coins];
   for (let i = 0; i < coins.length; i++) {
@@ -123,40 +124,62 @@ function minChange1(coins, amount, memo = {}) {
   return min_num_coins;
 }
 
-function minChange(coins, amount, memo = { [amount]: 0 }) {
-  // console.log(memo, coins.length);
+// function minChange(coins, amount, memo = { [amount]: 0 }) {
+//   // console.log(memo, coins.length);
 
-  // for (let i = 0; i < coins.length; i++) {
-  // for (let i = coins.length - 1; i >= 0; i--) {
-  // let prev_num_coins = memo[amount];
-  console.log("amount remaining: ", amount, "memo[amount]: ", memo[amount]);
-  current_coin = coins[coins.length - 1];
-  max_num_current_coin = Math.floor(amount / current_coin);
-  for (let j = 1; j <= max_num_current_coin; j++) {
-    const curr_amount = amount - j * current_coin;
-    let curr_num_coins = memo[amount] + j;
-    // if (
-    //   memo[curr_amount] !== undefined &&
-    //   memo[curr_amount] < curr_num_coins
-    // ) {
-    //   curr_num_coins = memo[curr_amount];
-    // } else
-    if (memo[curr_amount] === undefined || memo[curr_amount] > curr_num_coins) {
-      memo[curr_amount] = curr_num_coins;
+//   // for (let i = 0; i < coins.length; i++) {
+//   // for (let i = coins.length - 1; i >= 0; i--) {
+//   // let prev_num_coins = memo[amount];
+//   console.log("amount remaining: ", amount, "memo[amount]: ", memo[amount]);
+//   current_coin = coins[coins.length - 1];
+//   max_num_current_coin = Math.floor(amount / current_coin);
+//   for (let j = 1; j <= max_num_current_coin; j++) {
+//     const curr_amount = amount - j * current_coin;
+//     let curr_num_coins = memo[amount] + j;
+//     // if (
+//     //   memo[curr_amount] !== undefined &&
+//     //   memo[curr_amount] < curr_num_coins
+//     // ) {
+//     //   curr_num_coins = memo[curr_amount];
+//     // } else
+//     if (memo[curr_amount] === undefined || memo[curr_amount] > curr_num_coins) {
+//       memo[curr_amount] = curr_num_coins;
+//     }
+//     minChange(coins.slice(0, coins.length - 1), curr_amount, memo);
+//   }
+
+//   if (coins.length === 0) {
+//     return memo[0];
+//   }
+//   console.log(memo);
+//   // }
+//   // return memo[0];
+// }
+
+function minChange(coins, amount) {
+  let memo = { 0: 0 };
+  for (let c = 0; c < coins.length; c++) {
+    const coin = coins[c];
+    max_num_coin = Math.floor(amount / coin);
+    old_sum_list = Object.keys(memo);
+    for (let i = 0; i <= max_num_coin; i++) {
+      for (let j = 0; j < old_sum_list.length; j++) {
+        old_sum = parseInt(old_sum_list[j],10);
+        new_sum = old_sum + i * coin;
+        new_count = memo[old_sum] + i; // we access memo[old_sum] in case the count value changes during this loop - this way we always have the newest value
+        if (memo[new_sum] === undefined || memo[new_sum] > new_count) {
+          memo[new_sum] = new_count;
+        }
+      }
     }
-    minChange(coins.slice(0, coins.length - 1), curr_amount, memo);
-  }
-
-  if (coins.length === 0) {
-    return memo[0];
-  }
-  console.log(memo);
-  // }
-  // return memo[0];
+	}
+	// console.log(memo)
+  return memo[amount];
 }
+
 // console.log(83 +83 +83 +83 +83+ 83+ 83+ 83+ 83+ 83+ 83+ 83+ 83+ 186 +408 +408 +408 +408  +419 +419 +419 +419 +419 +419 +419)
 // console.log(5830-6249)
-console.log(minChange([1, 2, 5], 11)); // => 3, because 5 + 5 + 1 = 11
+// console.log(minChange([1, 2, 5], 11)); // => 3, because 5 + 5 + 1 = 11
 // console.log(minChange([1, 4, 5], 8)); // => 2, because 4 + 4 = 8
 // console.log(minChange([1, 5, 10, 25], 15)); // => 2, because 10 + 5 = 15
 // console.log(minChange([1, 5, 10, 25], 100)); // => 4, because 25 + 25 + 25 + 25 = 100
