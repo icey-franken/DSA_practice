@@ -236,67 +236,162 @@
 //   return memo;
 // }
 
+// // -----------------------------------------------------------------------------
+// // still too much memory usage - break it into pieces
+// function change(amount, coins, memo = { 0: 0 }) {
+//   // account for edge case of amount = 0
+//   if (amount === 0) {
+//     return 1;
+//     // account for edge case of no coins and non-zero amount
+//   } else if (coins.length === 0) {
+//     return 0;
+//   }
+//   // go through all but last coin
+//   for (let i = coins.length - 1; i > 0; i--) {
+//     const coin = coins[i];
+//     const current_amounts = Object.keys(memo);
+//     current_amounts.forEach((current_amount) => {
+//       // convert each current amount string to an integer
+//       current_amount = parseInt(current_amount, 10);
+//       max_num_coin = Math.floor((amount - current_amount) / coin);
+//       // add between 1 and max_num_coin to current_amount
+//       for (let i = 1; i <= max_num_coin; i++) {
+//         const new_amount = current_amount + i * coin;
+//         if (!memo[new_amount]) {
+//           memo[new_amount] = 1;
+//         } else {
+//           memo[new_amount]++;
+//         }
+//       }
+//     });
+//   }
+
+//   const coin = coins[0];
+//   // console.log(memo[amount]);
+//   const total_num_combos_with_last_coin = Object.entries(memo).reduce(
+//     (total_num_combos, [current_amount, num_combos]) => {
+//       current_amount = parseInt(current_amount, 10);
+//       console.log(current_amount === 0, amount, current_amount, num_combos);
+//       const remaining_amount = amount - current_amount;
+//       // console.log(remaining_amount, remaining_amount % coin === 0)
+//       if (remaining_amount % coin === 0) {
+//         return total_num_combos + num_combos;
+//       } else {
+//         return total_num_combos;
+//       }
+//     },
+//     0
+//   );
+//   // console.log(total_num_combos_with_last_coin, memo[amount])
+//   // console.log(memo)
+//   if (amount % coin === 0) {
+//     return total_num_combos_with_last_coin + 1;
+//   } else {
+//     return total_num_combos_with_last_coin;
+//   }
+// }
+
 // -----------------------------------------------------------------------------
-// still too much memory usage - break it into pieces
-function change(amount, coins, memo = { 0: 0 }) {
-  // account for edge case of amount = 0
+// late night brain blast...
+// still doesn't work - using shift or pop results in different answers
+// I still can't wrap my head around this...
+// function change(amount, coins, memo = { 0: 1 }) {
+//   if (coins.length === 0) {
+//     // if amount reached, return count
+//     // if amount not reached return 0 - set in our default memo value
+//     // case of amount = 0 taken care of - seeded with value of 1
+//     if (amount === 0) {
+//       return 1;
+//     } else if (!memo[amount]) {
+//       return 0;
+//     } else {
+// 			console.log(memo);
+//       return memo[amount];
+//     }
+//   }
+//   coin = coins.pop();
+//   amount_list = Object.keys(memo);
+//   for (let i = 0; i < amount_list.length; i++) {
+//     current_amount = parseInt(amount_list[i], 10);
+//     max_num_coin = Math.floor((amount - current_amount) / coin);
+//     for (let j = 1; j <= max_num_coin; j++) {
+//       const new_amount = current_amount + j * coin;
+//       if (memo[new_amount]) {
+//         memo[new_amount]++;
+//       } else {
+//         memo[new_amount] = 1;
+//       }
+//     }
+//   }
+//   return change(amount, coins, memo);
+// }
+
+// -----------------------------------------------------------------------------
+// using the internet
+function change(amount, coins) {
   if (amount === 0) {
     return 1;
-    // account for edge case of no coins and non-zero amount
   } else if (coins.length === 0) {
     return 0;
   }
-  // go through all but last coin
-  for (let i = coins.length - 1; i > 0; i--) {
-    const coin = coins[i];
-    const current_amounts = Object.keys(memo);
-    current_amounts.forEach((current_amount) => {
-      // convert each current amount string to an integer
-      current_amount = parseInt(current_amount, 10);
-      max_num_coin = Math.floor((amount - current_amount) / coin);
-      // add between 1 and max_num_coin to current_amount
-      for (let i = 1; i <= max_num_coin; i++) {
-        const new_amount = current_amount + i * coin;
-        if (!memo[new_amount]) {
-          memo[new_amount] = 1;
-        } else {
-          memo[new_amount]++;
-        }
-      }
-    });
-  }
 
-  const coin = coins[0];
-  // console.log(memo[amount]);
-  const total_num_combos_with_last_coin = Object.entries(memo).reduce(
-    (total_num_combos, [current_amount, num_combos]) => {
-      current_amount = parseInt(current_amount, 10);
-      console.log(current_amount === 0, amount, current_amount, num_combos);
-      const remaining_amount = amount - current_amount;
-      // console.log(remaining_amount, remaining_amount % coin === 0)
-      if (remaining_amount % coin === 0) {
-        return total_num_combos + num_combos;
-      } else {
-        return total_num_combos;
-      }
-    },
-    0
-  );
-  // console.log(total_num_combos_with_last_coin, memo[amount])
-  // console.log(memo)
-  if (amount % coin === 0) {
-    return total_num_combos_with_last_coin + 1;
-  } else {
-    return total_num_combos_with_last_coin;
+  // initialize our memo
+  // each key is an amount and each value is the number of ways we can reach that amount
+  let memo = { 0: 1 };
+  for (let i = 1; i <= amount; i++) {
+    memo[i] = 0;
   }
+  // console.log(memo)
+  coins.forEach((coin) => {
+    for (let curr_amt = 0; curr_amt <= amount; curr_amt++) {
+      if (curr_amt >= coin) {
+        memo[curr_amt] += memo[curr_amt - coin];
+      }
+    }
+  });
+
+  return memo[amount];
 }
 
 console.log(change(5, [2, 5])); //1
 console.log(change(5, [1, 2, 5])); // 4
 console.log(change(10, [1, 2])); //6
-console.log(change(10, [1, 2, 5])); //10
 console.log(change(500, [2, 7, 13])); //717
 console.log(change(100, [3, 5, 7, 8, 9, 10, 11])); // 6606
-// console.log(change(500, [1, 2, 5])); //12701
+console.log(change(500, [1, 2, 5])); //12701
 
 // console.log(change(500, [3, 5, 7, 8, 9, 10, 11]));
+
+console.log(change(10, [1, 2, 5])); //10
+
+// result with shift:
+// {
+//   '0': 1,
+//   '1': 1,
+//   '2': 2,
+//   '3': 2,
+//   '4': 3,
+//   '5': 4,
+//   '6': 5,
+//   '7': 5,
+//   '8': 6,
+//   '9': 6,
+//   '10': 8
+// }
+// 8
+
+// result with pop:
+// {
+//   '0': 1,
+//   '1': 1,
+//   '2': 2,
+//   '3': 2,
+//   '4': 3,
+//   '5': 4,
+//   '6': 5,
+//   '7': 6,
+//   '8': 7,
+//   '9': 8,
+//   '10': 10
+// }
+// 10
