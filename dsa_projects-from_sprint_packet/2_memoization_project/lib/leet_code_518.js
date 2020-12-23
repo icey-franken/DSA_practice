@@ -329,13 +329,7 @@
 // -----------------------------------------------------------------------------
 // using the internet
 function change(amount, coins) {
-  if (amount === 0) {
-    return 1;
-  } else if (coins.length === 0) {
-    return 0;
-  }
-
-  // initialize our memo
+    // initialize our memo
   // each key is an amount and each value is the number of ways we can reach that amount
   let memo = { 0: 1 };
   for (let i = 1; i <= amount; i++) {
@@ -349,10 +343,14 @@ function change(amount, coins) {
       }
     }
   });
-
   return memo[amount];
 }
-
+// what the fuck this is so simple
+// I am upset
+// not really
+// but
+// I spent so much time trying to reinvent the wheel
+// this is a classical dynamic programming problem
 console.log(change(5, [2, 5])); //1
 console.log(change(5, [1, 2, 5])); // 4
 console.log(change(10, [1, 2])); //6
