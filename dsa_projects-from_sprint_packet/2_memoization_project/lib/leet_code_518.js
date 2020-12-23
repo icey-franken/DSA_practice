@@ -72,102 +72,235 @@
 // 	return valid_combo_count;
 
 // 4. code:
-// inefficient - too much memory usage
-function change1(amount, coins) {
-  let coin_combos = [[]];
-  for (let i = 0; i < coins.length; i++) {
-    const coin = coins[i];
-    let new_coin_combos = [];
-    for (let j = 0; j < coin_combos.length; j++) {
-      const combo = coin_combos[j];
-      let current_amount = combo.reduce(
-        (sum, single_coin) => sum + single_coin,
-        0
-      );
-      const max_num_coin = Math.floor((amount - current_amount) / coin);
-      let coins_to_add = [];
-      for (let k = 0; k <= max_num_coin; k++) {
-        const new_combo = [...combo, ...coins_to_add];
-        new_coin_combos.push(new_combo);
-        coins_to_add.push(coin);
-      }
-    }
-    coin_combos = [...new_coin_combos];
-    // console.log(coin_combos);
-  }
-  let valid_combo_count = 0;
-  for (let i = 0; i < coin_combos.length; i++) {
-    const coin_combo = coin_combos[i];
-    const sum = coin_combo.reduce((sum, single_coin) => sum + single_coin, 0);
-    if (sum === amount) {
-      valid_combo_count++;
-    }
-  }
-  return valid_combo_count;
-}
+// // -----------------------------------------------------------------------------
+// // inefficient - too much memory usage
+// function change1(amount, coins) {
+//   let coin_combos = [[]];
+//   for (let i = 0; i < coins.length; i++) {
+//     const coin = coins[i];
+//     let new_coin_combos = [];
+//     for (let j = 0; j < coin_combos.length; j++) {
+//       const combo = coin_combos[j];
+//       let current_amount = combo.reduce(
+//         (sum, single_coin) => sum + single_coin,
+//         0
+//       );
+//       const max_num_coin = Math.floor((amount - current_amount) / coin);
+//       let coins_to_add = [];
+//       for (let k = 0; k <= max_num_coin; k++) {
+//         const new_combo = [...combo, ...coins_to_add];
+//         new_coin_combos.push(new_combo);
+//         coins_to_add.push(coin);
+//       }
+//     }
+//     coin_combos = [...new_coin_combos];
+//     // console.log(coin_combos);
+//   }
+//   let valid_combo_count = 0;
+//   for (let i = 0; i < coin_combos.length; i++) {
+//     const coin_combo = coin_combos[i];
+//     const sum = coin_combo.reduce((sum, single_coin) => sum + single_coin, 0);
+//     if (sum === amount) {
+//       valid_combo_count++;
+//     }
+//   }
+//   return valid_combo_count;
+// }
 
-// we assume
-function change2(amount, coins) {
-	if(coins.length === 0 && amount === 0){
-		return 1;
-	} else if(coins.length === 0 && amount !== 0){
-		return 0;
-	}
-	// ensure coins sorted smallest to largest
+// // -----------------------------------------------------------------------------
+// // still too much memory usage - memoization!
+// function change2(amount, coins) {
+// 	if(coins.length === 0 && amount === 0){
+// 		return 1;
+// 	} else if(coins.length === 0 && amount !== 0){
+// 		return 0;
+// 	}
+// 	// ensure coins sorted smallest to largest
+//   coins.sort((a, b) => b - a);
+//   // we want to avoid adding tons of arrays that will never sum to amount on our last loop
+//   // 	i.e. if coin is 1, on last loop it will generate at least n arrays, where n is amount, and only one of those arrays will be valid
+//   let coin_combos = [[]];
+//   for (let i = 0; i < coins.length; i++) {
+//     const coin = coins[i];
+//     // we know that we are on our last loop if coins.length-1 === i
+//     // on this loop we only want to add coin combos that sum to amount
+//     if (coins.length - 1 !== i) {
+//       new_coin_combos = change_on_not_last_loop(amount, coin_combos, coin);
+//       coin_combos = [...new_coin_combos];
+//     } else {
+//       return change_on_last_loop(amount, coin_combos, coin);
+//     }
+//   }
+
+//   function change_on_not_last_loop(amount, coin_combos, coin) {
+//     let new_coin_combos = [];
+//     for (let j = 0; j < coin_combos.length; j++) {
+//       const combo = coin_combos[j];
+//       let current_amount = combo.reduce(
+//         (sum, single_coin) => sum + single_coin,
+//         0
+//       );
+//       const max_num_coin = Math.floor((amount - current_amount) / coin);
+//       let coins_to_add = [];
+//       for (let k = 0; k <= max_num_coin; k++) {
+//         const new_combo = [...combo, ...coins_to_add];
+//         new_coin_combos.push(new_combo);
+//         coins_to_add.push(coin);
+//       }
+//     }
+//     return new_coin_combos;
+//   }
+// }
+
+// function change_on_last_loop(amount, coin_combos, last_coin) {
+//   // sum each coin combo passed into this function
+//   num_valid_coin_combos = coin_combos.reduce(
+//     (num_valid_coin_combos, coin_combo) => {
+//       const sum = coin_combo.reduce((sum, coin) => sum + coin, 0);
+//       const current_amount = amount - sum;
+//       // check if amount - current_sum is 0 OR evenly divisible by last_coin
+//       if (current_amount === 0 || current_amount % last_coin === 0) {
+//         // if so, increment counter
+//         num_valid_coin_combos++;
+//       }
+//       return num_valid_coin_combos;
+//     },
+//     0
+//   );
+//   // return counter
+//   return num_valid_coin_combos;
+// }
+
+// -----------------------------------------------------------------------------
+// still too much memory usage - memoization!
+// we know that each array generated will be unique because of how we are looping
+// therefore we don't need to store coin combo arrays - we only need to store the amount
+// we assume that duplicate amounts are generated using different combos and are therefore unique
+// we don't care about the individual amounts either - we care about the number of unique ways to reach a particular amount
+// if we add a single coin to a particular amount, that adds one way we can reach that same amount
+// // at the end of our function, what we care about are the number of unique ways to reach the specified amount - which will be memo[amount]!
+
+// function change(amount, coins) {
+//   if (amount === 0) {
+//     return 1;
+//   } else if (coins.length === 0 && amount !== 0) {
+//     return 0;
+//   }
+//   let memo = { 0: 0, [amount]: 0 };
+
+//   // ensure coins sorted smallest to largest
+//   coins.sort((a, b) => b - a);
+//   // we want to avoid adding tons of arrays that will never sum to amount on our last loop
+//   // 	i.e. if coin is 1, on last loop it will generate at least n arrays, where n is amount, and only one of those arrays will be valid
+//   coins.forEach((coin, idx) => {
+//     // we know that we are on our last loop if coins.length-1 === i
+//     // on this loop we only want to add coin combos that sum to amount
+//     if (coins.length - 1 !== idx) {
+//       memo = change_on_not_last_loop(amount, memo, coin);
+//     } else {
+//       memo = change_on_last_loop(amount, memo, coin);
+//     }
+//   });
+//   return memo[amount];
+// }
+
+// function change_on_not_last_loop(amount, memo, coin) {
+//   let current_amounts = Object.keys(memo);
+//   current_amounts.forEach((current_amount) => {
+//     current_amount = parseInt(current_amount, 10);
+//     const max_num_coin = Math.floor((amount - current_amount) / coin);
+//     for (let i = 1; i <= max_num_coin; i++) {
+//       const new_amount = current_amount + i * coin;
+//       if (memo[new_amount]) {
+//         // if we have already reach this amount, we increment the number of ways we can reach it
+//         memo[new_amount]++;
+//       } else {
+//         // if we haven't reached this amount, initialize it as 1
+//         memo[new_amount] = 1;
+//       }
+//     }
+//   });
+//   return memo;
+// }
+
+// function change_on_last_loop(amount, memo, last_coin) {
+//   // we only care about the current_amounts that can reach exactly amount with some multiple of the last coin
+//   // there is no use updating the memo for combos that add to anything but amount
+//   let current_amounts = Object.keys(memo);
+//   current_amounts.forEach((current_amount) => {
+//     const remaining_amount = amount - current_amount;
+//     if (remaining_amount > 0 && remaining_amount % last_coin === 0) {
+//       memo[amount]++;
+//     }
+//   });
+//   return memo;
+// }
+
+
+// -----------------------------------------------------------------------------
+// still too much memory usage - memoization!
+// we know that each array generated will be unique because of how we are looping
+// therefore we don't need to store coin combo arrays - we only need to store the amount
+// we assume that duplicate amounts are generated using different combos and are therefore unique
+// we don't care about the individual amounts either - we care about the number of unique ways to reach a particular amount
+// if we add a single coin to a particular amount, that adds one way we can reach that same amount
+// at the end of our function, what we care about are the number of unique ways to reach the specified amount - which will be memo[amount]!
+
+function change(amount, coins) {
+  if (amount === 0) {
+    return 1;
+  } else if (coins.length === 0 && amount !== 0) {
+    return 0;
+  }
+  let memo = { 0: 0, [amount]: 0 };
+
+  // ensure coins sorted smallest to largest
   coins.sort((a, b) => b - a);
   // we want to avoid adding tons of arrays that will never sum to amount on our last loop
   // 	i.e. if coin is 1, on last loop it will generate at least n arrays, where n is amount, and only one of those arrays will be valid
-  let coin_combos = [[]];
-  for (let i = 0; i < coins.length; i++) {
-    const coin = coins[i];
+  coins.forEach((coin, idx) => {
     // we know that we are on our last loop if coins.length-1 === i
     // on this loop we only want to add coin combos that sum to amount
-    if (coins.length - 1 !== i) {
-      new_coin_combos = change_on_not_last_loop(amount, coin_combos, coin);
-      coin_combos = [...new_coin_combos];
+    if (coins.length - 1 !== idx) {
+      memo = change_on_not_last_loop(amount, memo, coin);
     } else {
-      return change_on_last_loop(amount, coin_combos, coin);
+      memo = change_on_last_loop(amount, memo, coin);
     }
-  }
-
-  function change_on_not_last_loop(amount, coin_combos, coin) {
-    let new_coin_combos = [];
-    for (let j = 0; j < coin_combos.length; j++) {
-      const combo = coin_combos[j];
-      let current_amount = combo.reduce(
-        (sum, single_coin) => sum + single_coin,
-        0
-      );
-      const max_num_coin = Math.floor((amount - current_amount) / coin);
-      let coins_to_add = [];
-      for (let k = 0; k <= max_num_coin; k++) {
-        const new_combo = [...combo, ...coins_to_add];
-        new_coin_combos.push(new_combo);
-        coins_to_add.push(coin);
-      }
-    }
-    return new_coin_combos;
-  }
+  });
+  return memo[amount];
 }
 
-function change_on_last_loop(amount, coin_combos, last_coin) {
-  // sum each coin combo passed into this function
-  num_valid_coin_combos = coin_combos.reduce(
-    (num_valid_coin_combos, coin_combo) => {
-      const sum = coin_combo.reduce((sum, coin) => sum + coin, 0);
-      const current_amount = amount - sum;
-      // check if amount - current_sum is 0 OR evenly divisible by last_coin
-      if (current_amount === 0 || current_amount % last_coin === 0) {
-        // if so, increment counter
-        num_valid_coin_combos++;
+function change_on_not_last_loop(amount, memo, coin) {
+  let current_amounts = Object.keys(memo);
+  current_amounts.forEach((current_amount) => {
+    current_amount = parseInt(current_amount, 10);
+    const max_num_coin = Math.floor((amount - current_amount) / coin);
+    for (let i = 1; i <= max_num_coin; i++) {
+      const new_amount = current_amount + i * coin;
+      if (memo[new_amount]) {
+        // if we have already reach this amount, we increment the number of ways we can reach it
+        memo[new_amount]++;
+      } else {
+        // if we haven't reached this amount, initialize it as 1
+        memo[new_amount] = 1;
       }
-      return num_valid_coin_combos;
-    },
-    0
-  );
-  // return counter
-  return num_valid_coin_combos;
+    }
+  });
+  return memo;
 }
 
-// console.log(change2(5, [5, 2, 1]));
-console.log(change2(500, [3, 5, 7, 8, 9, 10, 11]));
+function change_on_last_loop(amount, memo, last_coin) {
+  // we only care about the current_amounts that can reach exactly amount with some multiple of the last coin
+  // there is no use updating the memo for combos that add to anything but amount
+  let current_amounts = Object.keys(memo);
+  current_amounts.forEach((current_amount) => {
+    const remaining_amount = amount - current_amount;
+    if (remaining_amount > 0 && remaining_amount % last_coin === 0) {
+      memo[amount]++;
+    }
+  });
+  return memo;
+}
+
+console.log(change(10, [5, 2, 1]));
+// console.log(change(500, [3, 5, 7, 8, 9, 10, 11]));
