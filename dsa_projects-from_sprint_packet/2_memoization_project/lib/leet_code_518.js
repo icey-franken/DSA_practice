@@ -72,7 +72,8 @@
 // 	return valid_combo_count;
 
 // 4. code:
-function change(amount, coins) {
+// inefficient - too much memory usage
+function change1(amount, coins) {
   let coin_combos = [[]];
   for (let i = 0; i < coins.length; i++) {
     const coin = coins[i];
@@ -105,4 +106,68 @@ function change(amount, coins) {
   return valid_combo_count;
 }
 
-console.log(change(50, [5, 2, 1]));
+// we assume
+function change2(amount, coins) {
+	if(coins.length === 0 && amount === 0){
+		return 1;
+	} else if(coins.length === 0 && amount !== 0){
+		return 0;
+	}
+	// ensure coins sorted smallest to largest
+  coins.sort((a, b) => b - a);
+  // we want to avoid adding tons of arrays that will never sum to amount on our last loop
+  // 	i.e. if coin is 1, on last loop it will generate at least n arrays, where n is amount, and only one of those arrays will be valid
+  let coin_combos = [[]];
+  for (let i = 0; i < coins.length; i++) {
+    const coin = coins[i];
+    // we know that we are on our last loop if coins.length-1 === i
+    // on this loop we only want to add coin combos that sum to amount
+    if (coins.length - 1 !== i) {
+      new_coin_combos = change_on_not_last_loop(amount, coin_combos, coin);
+      coin_combos = [...new_coin_combos];
+    } else {
+      return change_on_last_loop(amount, coin_combos, coin);
+    }
+  }
+
+  function change_on_not_last_loop(amount, coin_combos, coin) {
+    let new_coin_combos = [];
+    for (let j = 0; j < coin_combos.length; j++) {
+      const combo = coin_combos[j];
+      let current_amount = combo.reduce(
+        (sum, single_coin) => sum + single_coin,
+        0
+      );
+      const max_num_coin = Math.floor((amount - current_amount) / coin);
+      let coins_to_add = [];
+      for (let k = 0; k <= max_num_coin; k++) {
+        const new_combo = [...combo, ...coins_to_add];
+        new_coin_combos.push(new_combo);
+        coins_to_add.push(coin);
+      }
+    }
+    return new_coin_combos;
+  }
+}
+
+function change_on_last_loop(amount, coin_combos, last_coin) {
+  // sum each coin combo passed into this function
+  num_valid_coin_combos = coin_combos.reduce(
+    (num_valid_coin_combos, coin_combo) => {
+      const sum = coin_combo.reduce((sum, coin) => sum + coin, 0);
+      const current_amount = amount - sum;
+      // check if amount - current_sum is 0 OR evenly divisible by last_coin
+      if (current_amount === 0 || current_amount % last_coin === 0) {
+        // if so, increment counter
+        num_valid_coin_combos++;
+      }
+      return num_valid_coin_combos;
+    },
+    0
+  );
+  // return counter
+  return num_valid_coin_combos;
+}
+
+// console.log(change2(5, [5, 2, 1]));
+console.log(change2(500, [3, 5, 7, 8, 9, 10, 11]));
