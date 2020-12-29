@@ -101,9 +101,9 @@ function stepper(nums) {
   return memo[0];
 }
 // 5. example input:
-console.log(stepper([3, 1, 0, 5, 10])); // => true, because we can step through elements 3 -> 5 -> 10
-console.log(stepper([3, 4, 1, 0, 10])); // => true, because we can step through elements 3 -> 4 -> 10
-console.log(stepper([2, 3, 1, 1, 0, 4, 7, 8])); // => false, there is no way to step to the end
+// console.log(stepper([3, 1, 0, 5, 10])); // => true, because we can step through elements 3 -> 5 -> 10
+// console.log(stepper([3, 4, 1, 0, 10])); // => true, because we can step through elements 3 -> 4 -> 10
+// console.log(stepper([2, 3, 1, 1, 0, 4, 7, 8])); // => false, there is no way to step to the end
 
 // 6. time/space complexity:
 // 		time: O(n^2) due to nested for loops
@@ -120,8 +120,51 @@ console.log(stepper([2, 3, 1, 1, 0, 4, 7, 8])); // => false, there is no way to 
 //
 // maxNonAdjacentSum([2, 7, 9, 3, 4])   // => 15, because 2 + 9 + 4
 // maxNonAdjacentSum([4,2,1,6])         // => 10, because 4 + 6
-function maxNonAdjacentSum(nums) {}
+// 1. clarify/test I/O/edge:
+//
+// 2/3. formulate approach/pseudocode:
+// 	we will always take either 2 or 3 steps - if we were to take 4 steps it would always better at least as good if not better to take 2 and 2 steps, because all values are given to be positive
+// 	seed our tabulation with first two values - one of those values will always be used in calculating max sum
+// 	initialize rest of tabulation as 0
+// 	initialize max_sum = 0
+// 	begin at index 0 and calculate max sum with 2 steps out, add to tabulation
+// 	do same for 3 steps out, add to tabulation
+// 	increment index, do same thing
+// 		if sum is greater than current value in tab array at index + step, update tab[index+step] to sum
+// 		if sum is greater than max_sum, update max_sum
+// 	return max_sum
+// 4. code
+function maxNonAdjacentSum(nums) {
+  let tab = Array(nums.length).fill(0);
+  tab[0] = nums[0];
+  tab[1] = nums[1];
+  let max_sum = 0;
+  const last_idx = nums.length - 1;
+  for (let idx = 0; idx <= last_idx; idx++) {
+    // take 2 or 3 steps
+    for (let step = 2; step <= 3; step++) {
+      const step_idx = idx + step;
+      if (step_idx <= last_idx) {
+        const step_sum = tab[idx] + nums[step_idx];
+        if (step_sum > tab[step_idx]) {
+          tab[step_idx] = step_sum;
+          if (step_sum > max_sum) {
+            max_sum = step_sum;
+          }
+        }
+      }
+    }
+  }
+  return max_sum;
+}
+// 5. example input
+// console.log(maxNonAdjacentSum([2, 7, 9, 3, 4])); // => 15, because 2 + 9 + 4
+// console.log(maxNonAdjacentSum([4, 2, 1, 6])); // => 10, because 4 + 6
+// 6. time/space complexity:
+// 	time: O(n) - inner for loop in constant time; all operations within main for loop are constant time as well (reassignment, array lookup, conditionals)
+// 	space: O(n) - tabulation occupies same space as input nums array.
 
+// -----------------------------------------------------------------------------------
 // Write a function, minChange(coins, amount), that accepts an array of coin values
 // and a target amount as arguments. The method should the minimum number of coins needed
 // to make the target amount. A coin value can be used multiple times.
@@ -134,7 +177,53 @@ function maxNonAdjacentSum(nums) {}
 // minChange([1, 4, 5], 8))         // => 2, because 4 + 4 = 8
 // minChange([1, 5, 10, 25], 15)    // => 2, because 10 + 5 = 15
 // minChange([1, 5, 10, 25], 100)   // => 4, because 25 + 25 + 25 + 25 = 100
-function minChange(coins, amount) {}
+
+// 1. clarify/test I/O/edge:
+// 	edge:
+// 		empty coins array and amount > 0? return 0
+// 		empty coins array and amount = 0? return 1
+// 2/3. formulate approach/pseudocode
+// 	tabulation - solve with bottom up approach
+// 		initialize tab array of length=amount and all elements equal to 0 except first
+// 		start at amount of 0 in tab array - 1 way to reach 0 (with no coins)
+// 		step to next index in tab array(equal to current amount)
+// 			if current amount - current coin is < 0: continue
+// 			else: tab[index] = tab[index] + tab[index-current_coin]
+// 		repeat for length of tab array
+// 		repeat for all coins
+// 		return tab[amount]
+
+// 4. code
+function minChange(coins, amount) {
+  let tab = Array(amount + 1).fill(Infinity);
+  tab[0] = 0;
+  coins.forEach((coin) => {
+    for (let curr_amt = 1; curr_amt <= amount; curr_amt++) {
+      if (curr_amt < coin) {
+        continue;
+      } else {
+        const prev_num_coins = tab[curr_amt];
+        const curr_num_coins = tab[curr_amt - coin] + 1;
+        if (curr_num_coins < prev_num_coins) {
+          tab[curr_amt] = curr_num_coins;
+        }
+      }
+    }
+  });
+  if (tab[amount] === Infinity) {
+    return -1;
+  } else {
+    return tab[amount];
+  }
+}
+
+// 5. example input
+console.log(minChange([1, 2, 5], 11)); // => 3, because 5 + 5 + 1 = 11
+console.log(minChange([1, 4, 5], 8)); // => 2, because 4 + 4 = 8
+console.log(minChange([1, 5, 10, 25], 15)); // => 2, because 10 + 5 = 15
+console.log(minChange([1, 5, 10, 25], 100)); // => 4, because 25 + 25 + 25 + 25 = 100
+
+// 6. time/space complexity
 
 module.exports = {
   stepper,
