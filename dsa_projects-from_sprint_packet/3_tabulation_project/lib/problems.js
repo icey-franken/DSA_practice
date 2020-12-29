@@ -134,22 +134,47 @@ function stepper(nums) {
 // 		if sum is greater than max_sum, update max_sum
 // 	return max_sum
 // 4. code
+// tabulation
+// function maxNonAdjacentSum(nums) {
+//   let tab = Array(nums.length).fill(0);
+//   tab[0] = nums[0];
+//   tab[1] = nums[1];
+//   let max_sum = 0;
+//   const last_idx = nums.length - 1;
+//   for (let idx = 0; idx <= last_idx; idx++) {
+//     // take 2 or 3 steps
+//     for (let step = 2; step <= 3; step++) {
+//       const step_idx = idx + step;
+//       if (step_idx <= last_idx) {
+//         const step_sum = tab[idx] + nums[step_idx];
+//         if (step_sum > tab[step_idx]) {
+//           tab[step_idx] = step_sum;
+//           if (step_sum > max_sum) {
+//             max_sum = step_sum;
+//           }
+//         }
+//       }
+//     }
+//   }
+//   return max_sum;
+// }
+
+// memoization:
 function maxNonAdjacentSum(nums) {
-  let tab = Array(nums.length).fill(0);
-  tab[0] = nums[0];
-  tab[1] = nums[1];
+  let memo = {
+    [nums.length - 1]: nums[nums.length - 1],
+    [nums.length - 2]: nums[nums.length - 2],
+  };
   let max_sum = 0;
-  const last_idx = nums.length - 1;
-  for (let idx = 0; idx <= last_idx; idx++) {
-    // take 2 or 3 steps
+  for (let i = nums.length - 1; i >= 0; i--) {
+    const curr_sum = memo[i];
     for (let step = 2; step <= 3; step++) {
-      const step_idx = idx + step;
-      if (step_idx <= last_idx) {
-        const step_sum = tab[idx] + nums[step_idx];
-        if (step_sum > tab[step_idx]) {
-          tab[step_idx] = step_sum;
-          if (step_sum > max_sum) {
-            max_sum = step_sum;
+      if (i - step >= 0) {
+        const next_sum = curr_sum + nums[i - step];
+        if (memo[i - step] === undefined || memo[i - step] < next_sum) {
+          memo[i - step] = next_sum;
+          if (next_sum > max_sum) {
+            max_sum = next_sum;
           }
         }
       }
@@ -182,7 +207,7 @@ function maxNonAdjacentSum(nums) {
 // 	edge:
 // 		empty coins array and amount > 0? return 0
 // 		empty coins array and amount = 0? return 1
-// 2/3. formulate approach/pseudocode
+// 2/3. formulate approach/pseudocode - this was for num ways to make an amount given a list of coins - WRONG
 // 	tabulation - solve with bottom up approach
 // 		initialize tab array of length=amount and all elements equal to 0 except first
 // 		start at amount of 0 in tab array - 1 way to reach 0 (with no coins)
