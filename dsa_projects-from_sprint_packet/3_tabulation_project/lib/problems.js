@@ -50,27 +50,55 @@
 // 	return tab[nums.length-1]
 
 // 4. code:
+// solved with tabulation
+// function stepper(nums) {
+//   let tab = [true];
+//   const len = nums.length;
+//   for (let i = 1; i < len; i++) {
+//     tab.push(false);
+//   }
+//   for (let i = 0; i < len; i++) {
+//     if (tab[i] === false) {
+//       continue;
+//     } else {
+//       const max_steps = nums[i];
+//       // start at j = i + 1 because we already know that tab[i] is true
+//       for (let j = i + 1; j <= i + max_steps; j++) {
+//         if (j >= len - 1) {
+//           return true;
+//         }
+//         tab[j] = true;
+//       }
+//     }
+// 	}
+//   return tab[len - 1];
+// }
+
+// solve with memoization
+// 2. formulate approach:
+// 	we take a top down approach for memoization:
+// 		start at end of nums - initialize index to true in memo, all others are false
+// 		check nums[index-j] - if value is greater than or equal to j, then index-j is true in memo, otherwise false
+// 		repeat until index-j<0
+// 		at end we return memo[0]
 function stepper(nums) {
-  let tab = [true];
-  const len = nums.length;
-  for (let i = 1; i < len; i++) {
-    tab.push(false);
-  }
-  for (let i = 0; i < len; i++) {
-    if (tab[i] === false) {
-      continue;
-    } else {
-      const max_steps = nums[i];
-      // start at j = i + 1 because we already know that tab[i] is true
-      for (let j = i + 1; j <= i + max_steps; j++) {
-        if (j >= len - 1) {
+  let memo = { [nums.length - 1]: true };
+  for (let i = nums.length - 1; i >= 0; i--) {
+    for (let j = 1; j <= i; j++) {
+      // we only check if memo[i] is true - if we can't reach that value in the first place then it is irrelevant
+      if (memo[i] && j <= nums[i - j]) {
+        memo[i - j] = true;
+        // short circuit here
+        if (i - j === 0) {
           return true;
         }
-        tab[j] = true;
+      } else if (memo[i - j] === undefined) {
+        memo[i - j] = false;
       }
     }
-	}
-  return tab[len - 1];
+  }
+  // console.log(memo);
+  return memo[0];
 }
 // 5. example input:
 console.log(stepper([3, 1, 0, 5, 10])); // => true, because we can step through elements 3 -> 5 -> 10
@@ -78,6 +106,8 @@ console.log(stepper([3, 4, 1, 0, 10])); // => true, because we can step through 
 console.log(stepper([2, 3, 1, 1, 0, 4, 7, 8])); // => false, there is no way to step to the end
 
 // 6. time/space complexity:
+// 		time: O(n^2) due to nested for loops
+// 		space: O(n) because we require a tabulation array of length equal to input array
 
 // -----------------------------------------------------------------------------------
 // Write a function, maxNonAdjacentSum(nums), that takes in an array of nonnegative numbers.
