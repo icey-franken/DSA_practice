@@ -328,39 +328,29 @@
 
 // -----------------------------------------------------------------------------
 // using the internet
-function change(amount, coins) {
-    // initialize our memo
-  // each key is an amount and each value is the number of ways we can reach that amount
-  let memo = { 0: 1 };
-  for (let i = 1; i <= amount; i++) {
-    memo[i] = 0;
-  }
-  // console.log(memo)
-  coins.forEach((coin) => {
-    for (let curr_amt = 0; curr_amt <= amount; curr_amt++) {
-      if (curr_amt >= coin) {
-        memo[curr_amt] += memo[curr_amt - coin];
-      }
-    }
-  });
-  return memo[amount];
-}
+// function change(amount, coins) {
+//     // initialize our memo
+//   // each key is an amount and each value is the number of ways we can reach that amount
+//   let memo = { 0: 1 };
+//   for (let i = 1; i <= amount; i++) {
+//     memo[i] = 0;
+//   }
+//   // console.log(memo)
+//   coins.forEach((coin) => {
+//     for (let curr_amt = 0; curr_amt <= amount; curr_amt++) {
+//       if (curr_amt >= coin) {
+//         memo[curr_amt] += memo[curr_amt - coin];
+//       }
+//     }
+//   });
+//   return memo[amount];
+// }
 // what the fuck this is so simple
 // I am upset
 // not really
 // but
 // I spent so much time trying to reinvent the wheel
 // this is a classical dynamic programming problem
-console.log(change(5, [2, 5])); //1
-console.log(change(5, [1, 2, 5])); // 4
-console.log(change(10, [1, 2])); //6
-console.log(change(500, [2, 7, 13])); //717
-console.log(change(100, [3, 5, 7, 8, 9, 10, 11])); // 6606
-console.log(change(500, [1, 2, 5])); //12701
-
-// console.log(change(500, [3, 5, 7, 8, 9, 10, 11]));
-
-console.log(change(10, [1, 2, 5])); //10
 
 // result with shift:
 // {
@@ -393,3 +383,35 @@ console.log(change(10, [1, 2, 5])); //10
 //   '10': 10
 // }
 // 10
+
+// --------------------------------------
+// fresh attempt a few days later:
+function change(amount, coins) {
+  let ways = [1];
+  for (let i = 0; i < amount; i++) {
+    ways.push(0);
+  }
+  for (let i = 0; i < coins.length; i++) {
+    const coin = coins[i];
+    for (let curr_amt = 1; curr_amt < ways.length; curr_amt++) {
+      if (coin > curr_amt) {
+        continue;
+      } else {
+        const prev_amt = curr_amt - coin;
+        ways[curr_amt] = ways[curr_amt] + ways[prev_amt];
+      }
+    }
+  }
+  return ways[amount];
+}
+
+console.log(change(5, [2, 5])); //1
+console.log(change(5, [1, 2, 5])); // 4
+console.log(change(10, [1, 2])); //6
+console.log(change(500, [2, 7, 13])); //717
+console.log(change(100, [3, 5, 7, 8, 9, 10, 11])); // 6606
+console.log(change(500, [1, 2, 5])); //12701
+
+console.log(change(500, [3, 5, 7, 8, 9, 10, 11]));
+
+console.log(change(10, [1, 2, 5])); //10
