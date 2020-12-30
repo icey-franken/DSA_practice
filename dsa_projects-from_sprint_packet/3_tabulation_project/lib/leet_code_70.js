@@ -59,3 +59,5 @@ console.log(climbStairs(2)); // 2
 console.log(climbStairs(3)); // 3
 
 // 6. time/space complexity
+// time: O(n) - single for loop with n iterations or 2n recursive calls
+// space: O(n) - tab or memo takes up n space
