@@ -44,6 +44,34 @@
 // 		if(from_left < tab[i][j+1]): tab[i][j+1] = from_left
 // return tab[num_rows-1][num_columns-1]
 // 4. code
+// function minPathSum(grid) {
+//   const num_rows = grid.length;
+//   const num_cols = grid[0].length;
+//   let tab = [];
+//   for (let i = 0; i < num_rows; i++) {
+//     tab.push(Array(num_cols).fill(Infinity));
+//   }
+//   tab[0][0] = grid[0][0];
+//   for (let i = 0; i < num_rows; i++) {
+//     for (let j = 0; j < num_cols; j++) {
+//       if (i > 0) {
+//         const from_top = tab[i - 1][j] + grid[i][j];
+//         if (from_top < tab[i][j]) {
+//           tab[i][j] = from_top;
+//         }
+//       }
+//       if (j > 0) {
+//         const from_left = tab[i][j - 1] + grid[i][j];
+//         if (from_left < tab[i][j]) {
+//           tab[i][j] = from_left;
+//         }
+//       }
+//     }
+//   }
+//   return tab[num_rows - 1][num_cols - 1];
+// }
+
+// faster solution:
 function minPathSum(grid) {
   const num_rows = grid.length;
   const num_cols = grid[0].length;
@@ -54,18 +82,15 @@ function minPathSum(grid) {
   tab[0][0] = grid[0][0];
   for (let i = 0; i < num_rows; i++) {
     for (let j = 0; j < num_cols; j++) {
-      if (i > 0) {
-        const from_top = tab[i - 1][j] + grid[i][j];
-        if (from_top < tab[i][j]) {
-          tab[i][j] = from_top;
-        }
+      if (i === 0 && j == 0) {
+        continue;
       }
-      if (j > 0) {
-        const from_left = tab[i][j-1] + grid[i][j];
-        if (from_left < tab[i][j]) {
-          tab[i][j] = from_left;
-        }
-      }
+      const from_top = i > 0 ? tab[i - 1][j] : Infinity;
+
+      const from_left = j > 0 ? tab[i][j - 1] : Infinity;
+
+      const prev_sum = from_top < from_left ? from_top : from_left;
+      tab[i][j] = prev_sum + grid[i][j];
     }
   }
   return tab[num_rows - 1][num_cols - 1];
