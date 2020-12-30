@@ -24,9 +24,35 @@
 
 // 1. clarify/test I/O/edge cases:
 // 2. formulate approach
+// 	in this problem order DOES matter
+// 	solve with tabulation
+// 	ways you can climb 1 step is trivial - 1 way
+// 	ways you can climb 2 steps is trivial - 2 ways
+// 	ways you can climb 3 steps is the number of ways you can climb 2 plus number of ways you can climb 1
+// 		tab[x] = tab[x-1]+tab[x-2] for x >= 3
 // 3. pseudocode
+// 	initialize table: length of n - 1 with all values = 0, except idx 1 = 1 and idx 2 = 2
+// 	for i between 3 and n: tab[i] = tab[i-1] + tab[i-2]
+// 	return tab[n]
 // 4. code
-function climbStairs(n) {}
+// tabulation
+// function climbStairs(n) {
+// 	let tab = Array(n-1).fill(0);
+// 	tab[0] = 1;
+// 	tab[1] = 2;
+// 	for(let i = 2; i < n; i ++){
+// 		tab[i] = tab[i-1] + tab[i-2];
+// 	}
+// 	return tab[n-1]
+// }
+
+// memoization
+function climbStairs(n, memo = { 1: 1, 2: 2 }) {
+  if (!memo[n]) {
+    memo[n] = climbStairs(n - 1, memo) + climbStairs(n - 2, memo);
+  }
+  return memo[n];
+}
 
 // 5. example input
 console.log(climbStairs(2)); // 2
