@@ -16,7 +16,8 @@ console.log(bubbleSort([4, 1, 5, 3, 2])); //[1, 2, 3, 4, 5]
 // 5. example input
 // 6. time/space complexity
 // time: naive bubble sort algorithm has O(n^2) time complexity.
-// 		my implementation has at worst O(n^2), but in practice it will be less than that
+// 		my implementation has at worst O(n^2), but in practice it will be less than that - at best O(n) time complexity for sorted array
+
 // space: O(1) constant space complexity, excluding the input array - including that it is O(n) time complexity.
 
 // note: we don't want to slice or splice as that has O(n) time complexity - instead we copy values
