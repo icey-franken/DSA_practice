@@ -159,7 +159,7 @@ function stepper(nums) {
 //   return max_sum;
 // }
 
-// memoization:
+// memoization: not sure if actually memoization - I'm just stepping from other end
 function maxNonAdjacentSum(nums) {
   let memo = {
     [nums.length - 1]: nums[nums.length - 1],
@@ -186,7 +186,7 @@ function maxNonAdjacentSum(nums) {
 // console.log(maxNonAdjacentSum([2, 7, 9, 3, 4])); // => 15, because 2 + 9 + 4
 // console.log(maxNonAdjacentSum([4, 2, 1, 6])); // => 10, because 4 + 6
 // 6. time/space complexity:
-// 	time: O(n) - inner for loop in constant time; all operations within main for loop are constant time as well (reassignment, array lookup, conditionals)
+// 	time: O(2n) ~ O(n) - inner for loop in constant time; all operations within main for loop are constant time as well (reassignment, array lookup, conditionals)
 // 	space: O(n) - tabulation occupies same space as input nums array.
 
 // -----------------------------------------------------------------------------------
@@ -219,27 +219,46 @@ function maxNonAdjacentSum(nums) {
 // 		return tab[amount]
 
 // 4. code
-function minChange(coins, amount) {
-  let tab = Array(amount + 1).fill(Infinity);
-  tab[0] = 0;
+// tabulation
+// function minChange(coins, amount) {
+//   let tab = Array(amount + 1).fill(Infinity);
+//   tab[0] = 0;
+//   coins.forEach((coin) => {
+//     for (let curr_amt = 1; curr_amt <= amount; curr_amt++) {
+//       if (curr_amt < coin) {
+//         continue;
+//       } else {
+//         const prev_num_coins = tab[curr_amt];
+//         const curr_num_coins = tab[curr_amt - coin] + 1;
+//         if (curr_num_coins < prev_num_coins) {
+//           tab[curr_amt] = curr_num_coins;
+//         }
+//       }
+//     }
+//   });
+//   if (tab[amount] === Infinity) {
+//     return -1;
+//   } else {
+//     return tab[amount];
+//   }
+// }
+
+// memoization
+function minChange(coins, amount, memo = { 0: 0 }) {
   coins.forEach((coin) => {
-    for (let curr_amt = 1; curr_amt <= amount; curr_amt++) {
-      if (curr_amt < coin) {
-        continue;
-      } else {
-        const prev_num_coins = tab[curr_amt];
-        const curr_num_coins = tab[curr_amt - coin] + 1;
-        if (curr_num_coins < prev_num_coins) {
-          tab[curr_amt] = curr_num_coins;
-        }
+    const prev_amt = amount - coin;
+    if (prev_amt < 0) {
+      return;
+    } else {
+      if (!memo[prev_amt]) {
+        memo[prev_amt] = minChange(coins, prev_amt, memo);
+      }
+      if (!memo[amount] || memo[prev_amt] + 1 < memo[amount]) {
+        memo[amount] = memo[prev_amt] + 1;
       }
     }
   });
-  if (tab[amount] === Infinity) {
-    return -1;
-  } else {
-    return tab[amount];
-  }
+  return memo[amount];
 }
 
 // 5. example input
@@ -249,6 +268,8 @@ console.log(minChange([1, 5, 10, 25], 15)); // => 2, because 10 + 5 = 15
 console.log(minChange([1, 5, 10, 25], 100)); // => 4, because 25 + 25 + 25 + 25 = 100
 
 // 6. time/space complexity
+// time:	O(coins.length * amount) ~ O(n) - assuming that amount >>> coins.length
+// space: tab takes up amount space in memory - O(n) space complexity. Other memory usages are constant
 
 module.exports = {
   stepper,
