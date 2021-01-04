@@ -35,15 +35,19 @@
 // return sorted result array
 
 // 4. code
-function countingSort(arr, max) {
+function countingSortUnoptimized(arr, max) {
   // create count array
   // 	initialize count array of length max+1; fill with zeroes
   // 	for value in input array:
   // 		count_array[value] += 1
   let count_arr = new Array(max + 1).fill(0);
+  let result_arr_length = 0;
   for (let i = 0; i < arr.length; i++) {
     const value = arr[i];
-    count_arr[value] += 1;
+    if (value <= max) {
+      count_arr[value] += 1;
+      result_arr_length += 1;
+    }
   }
 
   // create modified count array
@@ -60,22 +64,77 @@ function countingSort(arr, max) {
   // 	for value in input array:
   // 		position of sorted value = modified count array[value] - 1
   // 		modified count array[value] -= 1
-  let result_arr = new Array(arr.length).fill(-1);
+  let result_arr = new Array(result_arr_length).fill(-1);
   for (let i = 0; i < arr.length; i++) {
     const value = arr[i];
-    const sorted_val_idx = mod_count_arr[value] - 1;
-    result_arr[sorted_val_idx] = value;
-    mod_count_arr[value] -= 1;
+    if (value <= max) {
+      const sorted_val_idx = mod_count_arr[value] - 1;
+      result_arr[sorted_val_idx] = value;
+      mod_count_arr[value] -= 1;
+    }
   }
   // return sorted result array
   return result_arr;
 }
 
-// console.log(countingSort([1, 4, 1, 2, 7, 5, 2], 9)); // [1,1,2,2,4,5,7]
+// console.log(countingSort([1, 4, 1, 2, 7, 5, 2,10], 9)); // [1,1,2,2,4,5,7]
 
 // 5. example input
 
 // 6. time/space complexity
+// 	time:
+// 		three independent for loops with max iterations equal to greater of arr.length max max
+// 		operations withing all for loops are constant time - value lookup or mutation
+// 		overall time complexity is linear
+// 	space:
+// 		naive implementation requires count array and modified count array with space equal to max - T(2*m)
+// 		result array requires T(arr.length)
+// 		other space requirements are constant
+// 		over space complexity is linear
+
+
+// minor optimization - reduce space complexity
+// 	removed modified count array
+function countingSort(arr, max) {
+  // create count array
+  // 	initialize count array of length max+1; fill with zeroes
+  // 	for value in input array:
+  // 		count_array[value] += 1
+  let count_arr = new Array(max + 1).fill(0);
+  let result_arr_length = 0;
+  for (let i = 0; i < arr.length; i++) {
+    const value = arr[i];
+    if (value <= max) {
+      count_arr[value] += 1;
+      result_arr_length += 1;
+    }
+  }
+
+  // create modified count array - instead of new array, mutate count_arr
+  // 	for value in count array starting at index 1:
+  // 		count array[index] = count array[index] + count array[index-1]
+  for (let i = 1; i < count_arr.length; i++) {
+    count_arr[i] = count_arr[i] + count_arr[i - 1];
+  }
+
+  // create sorted result array
+  // 	initialize result array of length n; fill with -1
+  // 	for value in input array:
+  // 		position of sorted value = modified count array[value] - 1
+  // 		modified count array[value] -= 1
+  let result_arr = new Array(result_arr_length).fill(-1);
+  for (let i = 0; i < arr.length; i++) {
+    const value = arr[i];
+    if (value <= max) {
+      const sorted_val_idx = count_arr[value] - 1;
+      result_arr[sorted_val_idx] = value;
+      count_arr[value] -= 1;
+    }
+  }
+  // return sorted result array
+  return result_arr;
+}
+
 
 module.exports = {
   countingSort,
