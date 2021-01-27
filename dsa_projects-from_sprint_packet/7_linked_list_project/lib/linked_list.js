@@ -150,13 +150,36 @@ class LinkedList {
   }
 
   // TODO: Implement the insert method here
-  insert(index, val) {}
+  insert(index, val) {
+    const beforeNode = this.get(index - 1);
+    if (!beforeNode.next) {
+      return false;
+    }
+    const newNode = new Node(val);
+    const afterNode = beforeNode.next;
+    beforeNode.next = newNode;
+    newNode.next = afterNode;
+    this.length++;
+    return true;
+  }
 
   // TODO: Implement the remove method here
-  remove(index) {}
+  remove(index) {
+    const beforeNode = this.get(index - 1);
+    if (beforeNode && beforeNode.next) {
+      const removedNode = beforeNode.next;
+      beforeNode.next = removedNode.next;
+      this.length--;
+      return removedNode;
+    } else {
+      return;
+    }
+  }
 
   // TODO: Implement the size method here
-  size() {}
+  size() {
+    return this.length;
+  }
 }
 
 exports.Node = Node;
