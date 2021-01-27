@@ -39,19 +39,49 @@ class LinkedList {
   // TODO: Implement the addToTail method here
   addToTail(val) {
     const newTailNode = new Node(val);
+    // if tail node present, update it's next value before overwriting
     if (this.tail) {
       this.tail.next = newTailNode;
     }
     this.tail = newTailNode;
+    // if no head, then new tail node is head
     if (!this.head) {
       this.head = newTailNode;
     }
+    // update length
     this.length++;
+    // return new linked list
     return this;
   }
 
   // TODO: Implement the removeTail method here
-  removeTail() {}
+  // 1) Should remove tail node from the list when removeTail is called
+  // 2) Should reassign the new tail's next pointer to null
+  // 3) Should update the length property after removing the tail node
+  // 4) Should reassign both the head and tail pointers to null when tail is removed from a list of only one node
+  // 5) Should return the removed tail node when removeTail is called
+  removeTail() {
+    const oldTail = this.tail;
+
+    if (!this.head) {
+      return;
+    } else if (this.head === this.tail) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      // find second to last node
+      let currentNode = this.head;
+      while (currentNode.next && currentNode.next.next) {
+        currentNode = currentNode.next;
+      }
+      // set this node as tail and remove its next property
+      this.tail = currentNode;
+      currentNode.next = null;
+    }
+
+    this.length--;
+    return oldTail;
+  }
 
   // TODO: Implement the addToHead method here
   addToHead(val) {}
