@@ -139,7 +139,15 @@ class LinkedList {
   }
 
   // TODO: Implement the set method here
-  set(index, val) {}
+  set(index, val) {
+    const desiredNode = this.get(index);
+    if (desiredNode) {
+      desiredNode.value = val;
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   // TODO: Implement the insert method here
   insert(index, val) {}
