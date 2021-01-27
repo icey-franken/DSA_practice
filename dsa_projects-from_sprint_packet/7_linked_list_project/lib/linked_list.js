@@ -99,7 +99,17 @@ class LinkedList {
   }
 
   // TODO: Implement the removeHead method here
-  removeHead() {}
+  removeHead() {
+		const oldHead = this.head;
+    if (!this.head) {
+      return;
+    } else if(this.head === this.tail){
+			this.tail = null;
+		}
+    this.head = this.head.next;
+    this.length--;
+    return oldHead;
+  }
 
   // TODO: Implement the contains method here
   contains(target) {}
