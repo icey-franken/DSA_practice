@@ -100,19 +100,29 @@ class LinkedList {
 
   // TODO: Implement the removeHead method here
   removeHead() {
-		const oldHead = this.head;
+    const oldHead = this.head;
     if (!this.head) {
       return;
-    } else if(this.head === this.tail){
-			this.tail = null;
-		}
+    } else if (this.head === this.tail) {
+      this.tail = null;
+    }
     this.head = this.head.next;
     this.length--;
     return oldHead;
   }
 
   // TODO: Implement the contains method here
-  contains(target) {}
+  contains(target) {
+    let currentNode = this.head;
+    while (currentNode) {
+      if (currentNode.value === target) {
+        return true;
+      } else {
+        currentNode = currentNode.next;
+      }
+    }
+    return false;
+  }
 
   // TODO: Implement the get method here
   get(index) {}
